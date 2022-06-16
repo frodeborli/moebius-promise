@@ -61,12 +61,13 @@ class ProtoPromise implements PromiseInterface {
             $message = "Uncaught (in promise) ";
             $context = [];
             if ($result instanceof \Throwable) {
-                $message .= "{className}#{code}: {message} in {file}:{line}";
+                $message .= "{className}#{code}: {message} in {file}:{line}\n{traceAsString}";
                 $context['className'] = \get_class($result);
                 $context['code'] = $result->getCode();
                 $context['message'] = $result->getMessage();
                 $context['file'] = $result->getFile();
                 $context['line'] = $result->getLine();
+                $context['traceAsString'] = $result->getTraceAsString();
                 $context['exception'] = $result;
             } else {
                 $message .= "{debugType}";
@@ -218,13 +219,14 @@ class ProtoPromise implements PromiseInterface {
             try {
                 $callback($arg);
             } catch (\Throwable $e) {
-                $message = "Uncaught (in promise callback) {className} code={code}: {message} in {file}:{line}";
+                $message = "Uncaught (in promise callback) {className} code={code}: {message} in {file}:{line}\n{traceAsString}";
                 $context = [
                     'className' => \get_class($e),
                     'code' => $e->getCode(),
                     'message' => $e->getMessage(),
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
+                    'traceAsString' => $result->getTraceAsString(),
                     'exception' => $e
                 ];
                 Logger::get()->error($message, $context);
